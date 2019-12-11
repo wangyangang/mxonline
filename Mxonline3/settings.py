@@ -93,9 +93,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mxonline3',
         'USER': 'root',
-        'PASSWORD': 'mtianyanroot',
-        'HOST': '127.0.0.1'
-
+        'PASSWORD': '456wyg',
+        'HOST': '120.25.224.111'
     }
 }
 
@@ -144,15 +143,23 @@ STATICFILES_DIRS = [
 
 # 发送邮件的setting设置
 
-EMAIL_HOST = "smtp.qq.com"
-EMAIL_PORT = 25
-EMAIL_HOST_USER = "1147727180@qq.com"
-EMAIL_HOST_PASSWORD = "befmpxdvzkdygdie"
-EMAIL_USE_TLS = True
-EMAIL_FROM = "1147727180@qq.com"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtpdm.aliyun.com"
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "mail@wyg.wangyangang.com"
+EMAIL_HOST_PASSWORD = "456wygWYG31"
+#EMAIL_USE_TLS = True
+EMAIL_USE_SSL = True
+EMAIL_FROM = "慕课小站<mail@wyg.wangyangang.com>"
 
 # 设置我们上传文件的路径
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# 加上这个配置，可以让django允许验证未激活用户，使用authenticate方法验证不至于返回None
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.AllowAllUsersModelBackend']
+
+# 激活邮件里的链接地址
+ACTIVE_EMAIL_URL = "http://127.0.0.1:8000"

@@ -76,34 +76,56 @@ function login_form_submit(){
             return false;
         }
     });
+    console.log("######");
+    var username = $("#account_l").val();
+    var password = $("#password_l").val();
+    let csrf_token = $("input[name='csrfmiddlewaretoken']").val();
+    let form_Data = {
+        "username": username,
+        "password": password,
+        "csrfmiddlewaretoken": csrf_token
+    };
+
+    console.log($('#jsLoginForm').serialize() + '&autologin='+autoLogin + '&' + arg[0] + '=' + arg[1]);
+
     $.ajax({
         cache: false,
         type: 'post',
         dataType:'json',
-        url:"/user/login/",
-        data:$('#jsLoginForm').serialize() + '&autologin='+autoLogin + '&' + arg[0] + '=' + arg[1],
+        url:"/login/",
+
+        //data:$('#jsLoginForm').serialize() + '&autologin='+autoLogin + '&' + arg[0] + '=' + arg[1],
+        data: form_Data,
         async: true,
         beforeSend:function(XMLHttpRequest){
             $jsLoginBtn.val("登录中...");
             $jsLoginBtn.attr("disabled","disabled");
         },
         success: function(data) {
+            console.log('-------');
+            console.log(data);
             if(data.account_l){
+                console.log('data.account_1 function');
                 Dml.fun.showValidateError($accountl, data.account_l);
             }else if(data.password_l){
                 Dml.fun.showValidateError($("#password_l"),data.password_l);
             }else{
                 if(data.status == "success"){
-                    $('#jsLoginForm')[0].reset();
+                    //$('#jsLoginForm')[0].reset();
+                    console.log("data.url is :" + data.url);
                     window.location.href = data.url;
                 }else if(data.status == "failure"){
                     //注册账户处于未激活状态
                     if(data.msg=='no_active'){
                         zyemail = $accountl.val();
+                        console.log('zyemail='+ zyemail);
+
                         zyUname = zyemail;
                         $('#jsEmailToActive').html(zyemail);
                         var url = zyemail.split('@')[1],
                             $jsGoToEmail = $('#jsGoToEmail');
+                        console.log('url =' + url);
+                        console.log('hash(url)='+ hash['qq.com']);
                         $jsGoToEmail.attr("href",hash[url]);
                         if(undefined==hash[url] || hash[url]==null){
                             $jsGoToEmail.parent().hide();
@@ -123,7 +145,6 @@ function login_form_submit(){
     });
 
 }
-
 
 //找回密码表单提交
 function find_password_form_submit(){
@@ -182,8 +203,6 @@ function find_password_form_submit(){
     });
 }
 
-
-
 $('#jsSetNewPwdBtn').on('click', function(){
     var _self = $(this),
          $idAccount = $("#account");
@@ -234,8 +253,8 @@ $('#jsSetNewPwdBtn').on('click', function(){
     });
 })
 
+//兼容IE9下placeholder不显示问题
 $(function() {
-    //兼容IE9下placeholder不显示问题
     function isPlaceholder(){
         var input = document.createElement('input');
         return 'placeholder' in input;
@@ -324,11 +343,13 @@ $(function() {
 
     //弹出框关闭按钮
 	$('.jsCloseDialog').on('click', function(){
+	    $('#jsDialog').css('display', "");
 		$(this).parents('.dialogbox').hide();
         $('#dialogBg').hide();
         if($(this).siblings('form')[0]){
             $(this).siblings('form')[0].reset();
         }
+
 	});
 
 
@@ -376,26 +397,31 @@ $(function() {
     //再次发送激活邮件事件
 	$('#jsSenEmailAgin').on('click', function(e){
         e.preventDefault();
+        console.log('aaa');
 		$(".zy_success").removeClass("upmove");
+        console.log('bbb');
 		$(this).parent().hide();
+        console.log('ccc');
 		$(".sendE2").show().find("span").html("60s");
         $.ajax({
             cache:false,
             type:'get',
             dataType:'json',
-            url: "/user/send_again_email/",
+            url: "/users/resend_email_code/",
             data: {username:zyUname},
              success: function(data){
                  zy_str="验证邮件发送成功";
                  //console.log(data)
-                 if(data)
-                    zy_Countdown();
+                 if(data.status==="success"){
+                     zy_Countdown();
+                 }
+                 else{
+                     console.log(data.msg);
+                 }
              },
             error:function(){
                 zy_str="验证邮件发送失败";
             }
-
          });
 	});
-
 });

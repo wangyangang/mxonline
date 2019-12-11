@@ -74,7 +74,7 @@ class CourseDetailView(View):
         tag = course.tag
         if tag:
             # 从1开始否则会推荐自己
-            relate_courses = Course.objects.filter(tag=tag)[1:2]
+            relate_courses = Course.objects.filter(tag=tag).exclude(id=course.id)
         else:
             relate_courses = []
         return render(request, "course-detail.html", {
@@ -215,9 +215,12 @@ class VideoPlayView(LoginRequiredMixin, View):
         relate_courses = Course.objects.filter(id__in=course_ids).order_by(
             "-click_nums").exclude(id=course.id)[:4]
         # 是否收藏课程
+        import os
+        print(os.path.splitext(video.url)[1][1:])
         return render(request, "course-play.html", {
             "course": course,
             "all_resources": all_resources,
             "relate_courses": relate_courses,
             "video": video,
+            "video_type": "video/" + os.path.splitext(video.url)[1][1:]
         })

@@ -17,6 +17,12 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+-- 如果test数据库不存在，就创建test数据库：
+CREATE DATABASE IF NOT EXISTS mxonline3;
+
+-- 切换到test数据库
+USE mxonline3;
+
 -- ----------------------------
 -- Table structure for auth_group
 -- ----------------------------

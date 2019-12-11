@@ -2,7 +2,7 @@ from django.db import models
 from datetime import datetime
 
 from django.contrib.auth.models import AbstractUser
-
+from courses.models import Course
 
 # Create your models here.
 
@@ -88,8 +88,9 @@ class Banner(models.Model):
     image = models.ImageField(
         upload_to="banner/%Y/%m",
         verbose_name=u"轮播图",
-        max_length=100)
-    url = models.URLField(max_length=200, verbose_name=u"访问地址")
+        max_length=100, null=True, blank=True)
+    url = models.URLField(max_length=200, verbose_name=u"访问地址", null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="课程")
     # 默认index很大靠后。想要靠前修改index值。
     index = models.IntegerField(default=100, verbose_name=u"顺序")
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"添加时间")

@@ -28,7 +28,7 @@
 				<div class="left">
 					<div class="picbox">
 						<div class="tb-booth tb-pic">
-							<img width="440" height="445" src="{{ MEDIA_URL }}{{ course.image }}" class="jqzoom" />
+							<img width="100%" height="247" src="{{ MEDIA_URL }}{{ course.image }}" class="jqzoom" />
 						</div>
 
 					</div>
@@ -44,11 +44,9 @@
                             <li><span class="pram word3">章&nbsp;节&nbsp;数：</span><span>{{ course.lesson_set.count }}</span></li>
                             <li><span class="pram word3">课程类别：</span><span title="">{{ course.category }}</span></li>
 							<li class="piclist"><span class="pram word4">学习用户：</span>
-                                    {% for user_course in course.usercourse_set.get_queryset|slice:":5"%}
-                                                                            <span class="pic"><img width="40" height="40" src="{{ MEDIA_URL }}{{ user_course.user.image }}"/></span>
+                                {% for user_course in course.usercourse_set.get_queryset|slice:":5"%}
+                                    <span class="pic"><img width="40" height="40" src="{{ MEDIA_URL }}{{ user_course.user.image }}"/></span>
                                 {% endfor %}
-
-
 							</li>
 						</ul>
 						<div class="btns">
@@ -64,13 +62,13 @@
                              data-desc="我在#慕课网#发现了"
                              data-comment=""
                              data-url="/group/groupdetail/15/">
-                            <span class="fl">分享到：</span>
-                            <a href="#" class="bds_more" data-cmd="more"></a>
-                            <a title="分享到QQ空间" href="#" class="bds_qzone" data-cmd="qzone"></a>
-                            <a title="分享到新浪微博" href="#" class="bds_tsina" data-cmd="tsina"></a>
-                            <a title="分享到腾讯微博" href="#" class="bds_tqq" data-cmd="tqq"></a>
-                            <a title="分享到人人网" href="#" class="bds_renren" data-cmd="renren"></a>
-                            <a title="分享到微信" href="#" class="bds_weixin" data-cmd="weixin"></a>
+                            <span class="fl">分享到：</span><br>
+                            <a href="#" class="bds_more" data-cmd="more">更多</a>
+                            <a title="分享到QQ空间" href="#" class="bds_qzone" data-cmd="qzone">QQ空间</a>
+                            <a title="分享到新浪微博" href="#" class="bds_tsina" data-cmd="tsina">新浪微博</a>
+                            <a title="分享到腾讯微博" href="#" class="bds_tqq" data-cmd="tqq">腾讯微博</a>
+                            <a title="分享到人人网" href="#" class="bds_renren" data-cmd="renren">人人网</a>
+                            <a title="分享到微信" href="#" class="bds_weixin" data-cmd="weixin">微信</a>
                         </div>
                     </div>
 				</div>

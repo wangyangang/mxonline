@@ -4,7 +4,7 @@ import json
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
 # Django自带的用户验证,login
 from django.contrib.auth import authenticate, login, logout
@@ -90,7 +90,7 @@ class RegisterView(View):
             # 写入欢迎注册消息
             user_message = UserMessage()
             user_message.user = user_profile.id
-            user_message.message = "欢迎注册mtianyan慕课小站!! --系统自动消息"
+            user_message.message = "欢迎注册慕课小站!! --系统自动消息"
             user_message.save()
             # 发送注册激活邮件
             send_register_eamil(user_name, "register")
@@ -152,10 +152,9 @@ class LoginView(View):
             # 取不到时为空，username，password为前端页面name值
             user_name = request.POST.get("username", "")
             pass_word = request.POST.get("password", "")
-
             # 成功返回user对象,失败返回null
             user = authenticate(username=user_name, password=pass_word)
-
+            print('user is %s' % user)
             # 如果不是null说明验证成功
             if user is not None:
                 # 只有当用户激活时才给登录
@@ -163,21 +162,31 @@ class LoginView(View):
                     # login_in 两参数：request, user
                     # 实际是对request写了一部分东西进去，然后在render的时候：
                     # request是要render回去的。这些信息也就随着返回浏览器。完成登录
+                    print('is_active')
                     login(request, user)
+                    print('login_ok')
                     # 跳转到首页 user request会被带回到首页
                     # 增加重定向回原网页。
                     redirect_url = request.POST.get('next', '')
                     if redirect_url:
+                        print('redirect')
                         return HttpResponseRedirect(redirect_url)
                     # 跳转到首页 user request会被带回到首页
+                    print('index')
+                    return JsonResponse({
+                        "status": "success",
+                        "url": "/"
+                    })
                     return HttpResponseRedirect(reverse("index"))
                 # 即用户未激活跳转登录，提示未激活
                 else:
-                    return render(
-                        request, "login.html", {
-                            "msg": "用户名未激活! 请前往邮箱进行激活"})
+                    print('444444444')
+                    return JsonResponse({"status": "failure",
+                                         "msg": "no_active"})
             # 仅当用户真的密码出错时
             else:
+                return JsonResponse({"status": "failure",
+                                     "msg": "username or password is incorrect"})
                 return render(request, "login.html", {"msg": "用户名或密码错误!"})
         # 验证不成功跳回登录页面
         # 没有成功说明里面的值是None，并再次跳转回主页面
@@ -405,6 +414,18 @@ class SendEmailCodeView(LoginRequiredMixin, View):
             content_type='application/json')
 
 
+class ResendEmailCodeView(LoginRequiredMixin, View):
+    """重新发送邮箱验证码的View"""
+    def get(self, request):
+        username = request.GET.get("username", "")
+        print('email is %s' % username)
+        # 需要是存在的邮箱，并且未验证过(inactive)
+        if UserProfile.objects.filter(email=username, is_active=False):
+            send_register_eamil(username, "register")
+            return JsonResponse({"status": "success"})
+        return JsonResponse({"status": "failure", "msg": "邮箱不存在或已经验证"})
+
+
 class UpdateEmailView(LoginRequiredMixin, View):
     """修改邮箱的view:"""
     login_url = '/login/'
@@ -536,6 +557,7 @@ class IndexView(View):
     """首页view"""
 
     def get(self, request):
+        print('index.....function')
         # 取出轮播图
         all_banner = Banner.objects.all().order_by('index')[:5]
         # 正常位课程
@@ -544,9 +566,13 @@ class IndexView(View):
         banner_courses = Course.objects.filter(is_banner=True)[:3]
         # 课程机构
         course_orgs = CourseOrg.objects.all()[:15]
+
+        from django.conf import settings
+        print(settings.ROOT_URLCONF)
+
         return render(request, 'index.html', {
             "all_banner": all_banner,
             "courses": courses,
             "banner_courses": banner_courses,
-            "course_orgs": course_orgs,
+            "course_orgs": course_orgs
         })

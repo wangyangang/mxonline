@@ -39,7 +39,7 @@ class CourseOrg(models.Model):
     image = models.ImageField(
         upload_to="org/%Y/%m",
         verbose_name=u"Logo",
-        max_length=100)
+        max_length=100, null=True, blank=True)
     address = models.CharField(max_length=150, verbose_name=u"机构地址")
     # 一个城市可以有很多课程机构，通过将city设置外键，变成课程机构的一个字段
     # 可以让我们通过机构找到城市
@@ -75,7 +75,7 @@ class Teacher(models.Model):
         default='',
         upload_to="teacher/%Y/%m",
         verbose_name=u"头像",
-        max_length=100)
+        max_length=100, null=True, blank=True)
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"添加时间")
 
     class Meta:

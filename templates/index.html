@@ -1,14 +1,13 @@
 {% extends 'base.html' %}
 
 {% block titile %}
-首页 | mtianyan慕课小站
+首页 | 慕课小站
 {% endblock %}
 
 {% load staticfiles %}
 <!--crumbs start-->
 {% block custom_bread %}
 {% endblock %}
-
 
 {% block content %}
     <div class="banner">
@@ -19,7 +18,7 @@
 
                             {% for banner in all_banner %}
                             <li>
-                                    <a href="{{ banner.url }}">
+                                    <a href="{% url "course:course_detail" course_id=banner.course_id %}">
                                         <img width="1200" height="478" src="{{ MEDIA_URL }}{{ banner.image }}" />
                                     </a>
                                 </li>
@@ -67,7 +66,7 @@
 				<h1>公开课程</h1>
 				<div class="module1 eachmod">
 					<div class="module1_1 left">
-						<img width="228" height="614" src="{% static 'images/module1_1.jpg' %}"/>
+						<img width="228" height="535" src="{% static 'images/module1_1.jpg' %}"/>
 						<p class="fisrt_word">名师授课<br/>专业权威</p>
 						<a class="more" href="{% url 'course:list' %}">查看更多课程 ></a>
 					</div>
@@ -129,8 +128,8 @@
 					</div>
 					<div class="right">
 						<ul>
-{% for org in course_orgs %}
-                            <li class="{% if forloop.counter|divisibleby:'5' %}five{% endif %}">
+                            {% for org in course_orgs %}
+                                <li class="{% if forloop.counter|divisibleby:'5' %}five{% endif %}">
                                     <a href="{% url 'org:org_home' org.id %}">
                                         <div class="company">
                                             <img width="184" height="100" src="{{ MEDIA_URL }}{{ org.image }}"/>
