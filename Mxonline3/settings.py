@@ -162,4 +162,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.AllowAllUsersModelBackend']
 
 # 激活邮件里的链接地址
-ACTIVE_EMAIL_URL = "http://127.0.0.1:8000"
+# ACTIVE_EMAIL_URL = "http://127.0.0.1:8000"
+ACTIVE_EMAIL_URL = "http://120.25.224.111:8000"
